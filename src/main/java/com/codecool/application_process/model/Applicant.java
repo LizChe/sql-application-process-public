@@ -1,7 +1,7 @@
 package com.codecool.application_process.model;
 
 public class Applicant {
-    private int id;
+    private final int ID;
     private String firstName;
     private String lastName;
     private String phoneNumber;
@@ -9,7 +9,7 @@ public class Applicant {
     private int applicationCode;
 
     private Applicant(Builder builder) {
-        this.id = builder.id;
+        this.ID = builder.ID;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.phoneNumber = builder.phoneNumber;
@@ -17,8 +17,8 @@ public class Applicant {
         this.applicationCode = builder.applicationCode;
     }
 
-    public int getId() {
-        return id;
+    public int getID() {
+        return ID;
     }
 
     public String getFirstName() {
@@ -41,16 +41,20 @@ public class Applicant {
         return applicationCode;
     }
 
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public static class Builder {
-        private int id;
+        private int ID;
         private String firstName;
         private String lastName;
         private String phoneNumber;
         private String email;
         private int applicationCode;
 
-        public Builder withId(int id) {
-            this.id = id;
+        public Builder withId(int ID) {
+            this.ID = ID;
             return this;
         }
 
