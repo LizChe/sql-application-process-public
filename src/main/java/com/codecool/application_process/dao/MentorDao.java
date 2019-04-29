@@ -5,6 +5,8 @@ import java.util.List;
 import com.codecool.application_process.model.Mentor;
 
 public interface MentorDao {
-    public List<Mentor> getMentorsFullName();
-    public List<Mentor> getMentorsNickNameFrom(String city);
+
+    public List<Mentor> getMentors() throws DaoException;
+
+    public List<Mentor> getMentorsFrom(String city) throws DaoException;
 }
