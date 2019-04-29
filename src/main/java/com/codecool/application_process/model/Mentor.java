@@ -1,7 +1,7 @@
 package com.codecool.application_process.model;
 
 public class Mentor {
-    private int id;
+    private final int ID;
     private String firstName;
     private String lastName;
     private String nickName;
@@ -11,7 +11,7 @@ public class Mentor {
     private int favouriteNumber;
 
     private Mentor(Builder builder) {
-        this.id = builder.id;
+        this.ID = builder.ID;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.nickName = builder.nickName;
@@ -21,8 +21,8 @@ public class Mentor {
         this.favouriteNumber = builder.favouriteNumber;
     }
 
-    public int getId() {
-        return id;
+    public int getID() {
+        return ID;
     }
 
     public String getFirstName() {
@@ -54,7 +54,7 @@ public class Mentor {
     }
 
     public static class Builder {
-        private int id;
+        private int ID;
         private String firstName;
         private String lastName;
         private String nickName;
@@ -63,8 +63,8 @@ public class Mentor {
         private String city;
         private int favouriteNumber;
 
-        public Builder withId(int id) {
-            this.id = id;
+        public Builder withId(int ID) {
+            this.ID = ID;
             return this;
         }
 
