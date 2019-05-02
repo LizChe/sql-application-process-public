@@ -1,1 +1,20 @@
+# System files
+
 .DS_Store
+
+# Maven
+
+/target
+/test
+.classpath
+.settings
+.project
+
+# VS Code
+
+.vscode
+
+# IntelliJ
+
+.idea
+*.iml

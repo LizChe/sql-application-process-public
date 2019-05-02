@@ -8,7 +8,7 @@ Luckily they managed to design a database, which can be described by the Entity
 
 You'll have to create this database and than write queries to retrieve data from the database.
 
-![application_process_erd.png](/media/application_process_erd.png)
+![application_process_erd.png](src/main/resources/media/application_process_erd.png)
 
 ## Preparation
 
@@ -47,3 +47,22 @@ The HR department wants answers to the following questions:
 
 
 **Save your queries to queries.sql file.**
+
+
+# Application Client - Java & SQL
+
+## First Step
+
+You need to create a Java console application with some simple menu, where each menu point answers one question (or does what the question asks) from the previous exercise. If the question is to print out some table, please print it out in some readable way (e.g. different rows on separate lines, no unnecessary parenthesis around values etc.), but don't mess a lot with formatting.
+
+Implement that application using MVC and DAO patterns.
+
+## Second Step
+
+Add advanced search feature to your application. Advanced search should take a search phrase from user and later on look for it in all tables in the database.
+
+Add records adding and updating feature. User should provide required data and those data should be saved in the database.
+
+## Submission
+
+Submit your java code to the same repository as .sql files.
