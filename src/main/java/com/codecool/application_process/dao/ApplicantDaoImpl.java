@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 import com.codecool.application_process.model.Applicant;
 
-public class ApplicantDaoImpl implements ApplicantDao {
+public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
 
     @Override
     public void create(Applicant applicant) throws DaoException {
@@ -159,6 +159,54 @@ public class ApplicantDaoImpl implements ApplicantDao {
         } catch (SQLException e) {
             throw new DaoException("Failed to get the applicant with the email: "
                     + email + "\n" + e);
+        }
+        return applicants;
+    }
+
+    @Override
+    public List<Applicant> getMatchingResultFrom(String userInput) throws DaoException {
+
+        List<Applicant> applicants;
+        String query = "SELECT * FROM applicants "
+                + "WHERE first_name LIKE ? "
+                + "OR last_name LIKE ? "
+                + "OR phone_number LIKE ? "
+                + "OR email LIKE ?";
+
+        try (Connection connection = DatabaseConnector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, userInput);
+            preparedStatement.setString(2, userInput);
+            preparedStatement.setString(3, userInput);
+            preparedStatement.setString(4, userInput);
+            applicants = getApplicantsFrom(preparedStatement);
+
+        } catch (SQLException e) {
+            throw new DaoException("Failed to build the list of matching results from applicants.\n"
+                    + e);
+        }
+        return applicants;
+    }
+
+    @Override
+    public List<Applicant> getMatchingResultFrom(int userInput) throws DaoException {
+
+        List<Applicant> applicants;
+        String query = "SELECT * FROM applicants "
+                + "WHERE id = ?"
+                + "OR application_code = ?";
+
+        try (Connection connection = DatabaseConnector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setInt(1, userInput);
+            preparedStatement.setInt(2, userInput);
+            applicants = getApplicantsFrom(preparedStatement);
+
+        } catch (SQLException e) {
+            throw new DaoException("Failed to build the list of matching results from applicants.\n"
+                    + e);
         }
         return applicants;
     }
