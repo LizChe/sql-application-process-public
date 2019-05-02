@@ -2,10 +2,12 @@ package com.codecool.application_process.service;
 
 import java.util.List;
 
-import com.codecool.application_process.model.Applicant;
+import com.codecool.application_process.dao.DaoException;
 import com.codecool.application_process.dao.ApplicantDaoImpl;
-import com.codecool.application_process.view.View;
 
+import com.codecool.application_process.model.Applicant;
+
+import com.codecool.application_process.view.View;
 
 public class ApplicantService {
 
@@ -17,7 +19,6 @@ public class ApplicantService {
         view = new View();
         applicantDao = new ApplicantDaoImpl();
     }
-
 
     public void createNewApplicant() {
         Applicant applicant;
@@ -46,7 +47,11 @@ public class ApplicantService {
                 .withApplicationCode(applicationCode)
                 .build();
 
-        applicantDao.create(applicant);
+        try {
+            applicantDao.create(applicant);
+        } catch (DaoException e) {
+            view.printText(e.getMessage());
+        }
         view.printText("Successfully Created.");
     }
 
@@ -55,7 +60,11 @@ public class ApplicantService {
         view.printText("Email:");
         email = view.getStringInput();
 
-        applicantDao.deleteApplicantBy(email);
+        try {
+            applicantDao.deleteApplicantBy(email);
+        } catch (DaoException e) {
+            view.printText(e.getMessage());
+        }
         view.printText("Successfully Deleted.");
     }
 
@@ -76,13 +85,23 @@ public class ApplicantService {
         firstName = fullName[0];
         lastName = fullName[1];
 
-        applicants = applicantDao.getApplicantBy(firstName, lastName);
+        try {
+            applicants = applicantDao.getApplicantBy(firstName, lastName);
+        } catch (DaoException e) {
+            view.printText(e.getMessage());
+        }
+
         applicant = applicants.get(0);
 
         view.printText("New phone number:");
         phoneNumber = view.getStringInput();
         applicant.setPhoneNumber(phoneNumber);
-        applicantDao.update(applicant);
+
+        try {
+            applicantDao.update(applicant);
+        } catch (DaoException e) {
+            view.printText(e.getMessage());
+        }
         view.printText("Successfully Updated.");
     }
 
@@ -94,18 +113,25 @@ public class ApplicantService {
         view.printText("Name or full name:");
         fullName = view.getStringInput().split(" ");
         if (fullName.length == 1) {
-            applicants = applicantDao.getApplicantsByFirstName(fullName[0]);
+            try {
+                applicants = applicantDao.getApplicantsByFirstName(fullName[0]);
+            } catch (DaoException e) {
+                view.printText(e.getMessage());
+            }
         } else if (fullName.length == 2) {
             firstName = fullName[0];
             lastName = fullName[1];
-            applicants = applicantDao.getApplicantBy(firstName, lastName);
+            try {
+                applicants = applicantDao.getApplicantBy(firstName, lastName);
+            } catch (DaoException e) {
+                view.printText(e.getMessage());
+            }
         }
 
-        if (applicants.isEmpty()) {
-            view.printText("No results.");
-        } else {
+        if (verifyIfNotEmpty(applicants)) {
             for (Applicant applicant : applicants) {
-                view.printFormattedText("%n%s %s: %s", applicant.getFirstName(), applicant.getLastName(), applicant.getPhoneNumber());
+                view.printFormattedText("%n%s %s: %s",
+                        applicant.getFirstName(), applicant.getLastName(), applicant.getPhoneNumber());
             }
         }
     }
@@ -116,10 +142,13 @@ public class ApplicantService {
         view.printText("Email:");
         email = view.getStringInput();
 
-        applicants = applicantDao.getApplicantsByEmail(email);
-        if (applicants.isEmpty()) {
-            view.printText("No results.");
-        } else {
+        try {
+            applicants = applicantDao.getApplicantsByEmail(email);
+        } catch (DaoException e) {
+            view.printText(e.getMessage());
+        }
+
+        if (verifyIfNotEmpty(applicants)) {
             printAllData(applicants);
         }
     }
@@ -129,10 +158,12 @@ public class ApplicantService {
 
         view.printText("Application code:");
         applicationCode = view.getIntInput();
-        applicants = applicantDao.getApplicantBy(applicationCode);
-        if (applicants.isEmpty()) {
-            view.printText("No results.");
-        } else {
+        try {
+            applicants = applicantDao.getApplicantBy(applicationCode);
+        } catch (DaoException e) {
+            view.printText(e.getMessage());
+        }
+        if (verifyIfNotEmpty(applicants)) {
             printAllData(applicants);
         }
     }
@@ -142,5 +173,13 @@ public class ApplicantService {
             view.printFormattedText("%n%s %s %s %s %s %s", applicant.getID(), applicant.getFirstName(), applicant.getLastName(),
                     applicant.getPhoneNumber(), applicant.getEmail(), applicant.getApplicationCode());
         }
+    }
+
+    private boolean verifyIfNotEmpty(List<Applicant> applicants) {
+        if (applicants.isEmpty()) {
+            view.printText("No results.");
+            return false;
+        }
+        return true;
     }
 }
