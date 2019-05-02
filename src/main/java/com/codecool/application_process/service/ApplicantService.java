@@ -101,8 +101,12 @@ public class ApplicantService {
             applicants = applicantDao.getApplicantBy(firstName, lastName);
         }
 
-        for (Applicant applicant : applicants) {
-            view.printFormattedText("%n%s %s: %s", applicant.getFirstName(), applicant.getLastName(), applicant.getPhoneNumber());
+        if (applicants.isEmpty()) {
+            view.printText("No results.");
+        } else {
+            for (Applicant applicant : applicants) {
+                view.printFormattedText("%n%s %s: %s", applicant.getFirstName(), applicant.getLastName(), applicant.getPhoneNumber());
+            }
         }
     }
 
@@ -113,7 +117,11 @@ public class ApplicantService {
         email = view.getStringInput();
 
         applicants = applicantDao.getApplicantsByEmail(email);
-        printAllData(applicants);
+        if (applicants.isEmpty()) {
+            view.printText("No results.");
+        } else {
+            printAllData(applicants);
+        }
     }
 
     public void findApplicantByApplicationCode() {
@@ -122,7 +130,11 @@ public class ApplicantService {
         view.printText("Application code:");
         applicationCode = view.getIntInput();
         applicants = applicantDao.getApplicantBy(applicationCode);
-        printAllData(applicants);
+        if (applicants.isEmpty()) {
+            view.printText("No results.");
+        } else {
+            printAllData(applicants);
+        }
     }
 
     private void printAllData(List<Applicant> applicants) {
