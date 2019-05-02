@@ -3,8 +3,10 @@ package com.codecool.application_process.service;
 import java.util.List;
 
 import com.codecool.application_process.dao.DaoException;
-import com.codecool.application_process.model.Mentor;
 import com.codecool.application_process.dao.MentorDaoImpl;
+
+import com.codecool.application_process.model.Mentor;
+
 import com.codecool.application_process.view.View;
 
 
@@ -40,12 +42,18 @@ public class MentorService {
             view.printText(e.getMessage());
         }
 
-        if (mentors.isEmpty()) {
-            view.printText("No results.");
-        } else {
+        if (verifyIfNotEmpty(mentors)) {
             for (Mentor mentor : mentors) {
                 view.printText(mentor.getNickName());
             }
         }
+    }
+
+    private boolean verifyIfNotEmpty(List<Mentor> mentors) {
+        if (mentors.isEmpty()) {
+            view.printText("No results.");
+            return false;
+        }
+        return true;
     }
 }
