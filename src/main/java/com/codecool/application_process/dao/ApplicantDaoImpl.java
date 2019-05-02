@@ -153,7 +153,7 @@ public class ApplicantDaoImpl implements ApplicantDao {
         try (Connection connection = DatabaseConnector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setString(1, email);
+            preparedStatement.setString(1, "%" + email + "%");
             applicants = getApplicantsFrom(preparedStatement);
 
         } catch (SQLException e) {
