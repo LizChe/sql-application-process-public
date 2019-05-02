@@ -54,6 +54,7 @@ public class MentorDaoImpl implements MentorDao, SearchDao<Mentor> {
     public List<Mentor> getMatchingResultFrom(String userInput) throws DaoException {
 
         List<Mentor> mentors;
+        userInput = "%" + userInput + "%";
         String query = "SELECT * FROM mentors "
                 + "WHERE first_name LIKE ? "
                 + "OR last_name LIKE ? "
