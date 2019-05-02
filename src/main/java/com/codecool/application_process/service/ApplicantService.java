@@ -2,8 +2,8 @@ package com.codecool.application_process.service;
 
 import java.util.List;
 
-import com.codecool.application_process.dao.DaoException;
 import com.codecool.application_process.dao.ApplicantDaoImpl;
+import com.codecool.application_process.dao.DaoException;
 
 import com.codecool.application_process.model.Applicant;
 
@@ -170,7 +170,8 @@ public class ApplicantService {
 
     private void printAllData(List<Applicant> applicants) {
         for (Applicant applicant : applicants) {
-            view.printFormattedText("%n%s %s %s %s %s %s", applicant.getID(), applicant.getFirstName(), applicant.getLastName(),
+            view.printFormattedText("%n%s %s %s %s %s %s",
+                    applicant.getID(), applicant.getFirstName(), applicant.getLastName(),
                     applicant.getPhoneNumber(), applicant.getEmail(), applicant.getApplicationCode());
         }
     }
