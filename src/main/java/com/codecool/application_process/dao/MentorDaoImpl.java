@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 import com.codecool.application_process.model.Mentor;
 
-public class MentorDaoImpl implements MentorDao {
+public class MentorDaoImpl implements MentorDao, SearchDao<Mentor> {
 
     @Override
     public List<Mentor> getMentors() throws DaoException {
@@ -46,6 +46,58 @@ public class MentorDaoImpl implements MentorDao {
 
         } catch (SQLException e) {
             throw new DaoException("Failed to build list of mentors from: " + city + ".\n" + e);
+        }
+        return mentors;
+    }
+
+    @Override
+    public List<Mentor> getMatchingResultFrom(String userInput) throws DaoException {
+
+        List<Mentor> mentors;
+        String query = "SELECT * FROM mentors "
+                + "WHERE first_name LIKE ? "
+                + "OR last_name LIKE ? "
+                + "OR nick_name LIKE ?"
+                + "OR phone_number LIKE ? "
+                + "OR email LIKE ? "
+                + "OR city LIKE ?";
+
+        try (Connection connection = DatabaseConnector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, userInput);
+            preparedStatement.setString(2, userInput);
+            preparedStatement.setString(3, userInput);
+            preparedStatement.setString(4, userInput);
+            preparedStatement.setString(5, userInput);
+            preparedStatement.setString(6, userInput);
+            mentors = getMentorsFrom(preparedStatement);
+
+        } catch (SQLException e) {
+            throw new DaoException("Failed to build the list of matching results from mentors.\n"
+                    + e);
+        }
+        return mentors;
+    }
+
+    @Override
+    public List<Mentor> getMatchingResultFrom(int userInput) throws DaoException {
+
+        List<Mentor> mentors;
+        String query = "SELECT * FROM mentors "
+                + "WHERE id = ?"
+                + "OR favourite_number = ?";
+
+        try (Connection connection = DatabaseConnector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setInt(1, userInput);
+            preparedStatement.setInt(2, userInput);
+            mentors = getMentorsFrom(preparedStatement);
+
+        } catch (SQLException e) {
+            throw new DaoException("Failed to build the list of matching results from mentors.\n"
+                    + e);
         }
         return mentors;
     }
