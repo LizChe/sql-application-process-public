@@ -2,6 +2,7 @@ package com.codecool.application_process.service;
 
 import java.util.List;
 
+import com.codecool.application_process.dao.DaoException;
 import com.codecool.application_process.model.Mentor;
 import com.codecool.application_process.dao.MentorDaoImpl;
 import com.codecool.application_process.view.View;
@@ -19,7 +20,11 @@ public class MentorService {
     }
 
     public void getMentorsFullName() {
-        mentors = mentorsDao.getMentors();
+        try {
+            mentors = mentorsDao.getMentors();
+        } catch (DaoException e) {
+            view.printText(e.getMessage());
+        }
         for (Mentor mentor : mentors) {
             view.printFormattedText("%n%s %s", mentor.getFirstName(), mentor.getLastName());
         }
@@ -28,7 +33,12 @@ public class MentorService {
     public void getMentorsByChosenCity() {
         view.printText("City:");
         String city = view.getStringInput();
-        mentors = mentorsDao.getMentorsFrom(city);
+
+        try {
+            mentors = mentorsDao.getMentorsFrom(city);
+        } catch (DaoException e) {
+            view.printText(e.getMessage());
+        }
 
         if (mentors.isEmpty()) {
             view.printText("No results.");
