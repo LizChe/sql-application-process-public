@@ -65,27 +65,29 @@ public class MentorDaoImpl implements MentorDao {
         int favouriteNumber;
 
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
-            ID = resultSet.getInt("id");
-            firstName = resultSet.getString("first_name");
-            lastName = resultSet.getString("last_name");
-            nickName = resultSet.getString("nick_name");
-            phoneNumber = resultSet.getString("phone_number");
-            email = resultSet.getString("email");
-            city = resultSet.getString("city");
-            favouriteNumber = resultSet.getInt("favourite_number");
+            while (resultSet.next()) {
+                ID = resultSet.getInt("id");
+                firstName = resultSet.getString("first_name");
+                lastName = resultSet.getString("last_name");
+                nickName = resultSet.getString("nick_name");
+                phoneNumber = resultSet.getString("phone_number");
+                email = resultSet.getString("email");
+                city = resultSet.getString("city");
+                favouriteNumber = resultSet.getInt("favourite_number");
 
-            mentor = new Mentor.Builder()
-                    .withId(ID)
-                    .withFirstName(firstName)
-                    .withLastName(lastName)
-                    .withNickName(nickName)
-                    .withPhoneNumber(phoneNumber)
-                    .withEmail(email)
-                    .withCity(city)
-                    .withFavouriteNumber(favouriteNumber)
-                    .build();
+                mentor = new Mentor.Builder()
+                        .withId(ID)
+                        .withFirstName(firstName)
+                        .withLastName(lastName)
+                        .withNickName(nickName)
+                        .withPhoneNumber(phoneNumber)
+                        .withEmail(email)
+                        .withCity(city)
+                        .withFavouriteNumber(favouriteNumber)
+                        .build();
 
-            mentors.add(mentor);
+                mentors.add(mentor);
+            }
 
         } catch (SQLException e) {
             throw new DaoException("Failed to populate the list of mentors.\n" + e);
