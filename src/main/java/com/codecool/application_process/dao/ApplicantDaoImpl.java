@@ -167,6 +167,7 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
     public List<Applicant> getMatchingResultFrom(String userInput) throws DaoException {
 
         List<Applicant> applicants;
+        userInput = "%" + userInput + "%";
         String query = "SELECT * FROM applicants "
                 + "WHERE first_name LIKE ? "
                 + "OR last_name LIKE ? "
