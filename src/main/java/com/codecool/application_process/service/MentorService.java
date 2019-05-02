@@ -29,8 +29,13 @@ public class MentorService {
         view.printText("City:");
         String city = view.getStringInput();
         mentors = mentorsDao.getMentorsFrom(city);
-        for (Mentor mentor : mentors) {
-            view.printText(mentor.getNickName());
+
+        if (mentors.isEmpty()) {
+            view.printText("No results.");
+        } else {
+            for (Mentor mentor : mentors) {
+                view.printText(mentor.getNickName());
+            }
         }
     }
 }
