@@ -22,17 +22,16 @@ public class Controller {
 
     public void run() {
         isRunning = true;
-        view.clearScreen();
         while (isRunning) {
+            view.clearScreen();
             view.displayLogo();
             view.displayMenu();
-           handleController();
+            handleController();
         }
     }
 
     private void handleController() {
         int userChoice = view.getIntInput();
-        //view.clearScreen();
         switch (userChoice) {
             case 1:
                 mentorController.handleMentorController();
@@ -42,6 +41,7 @@ public class Controller {
                 break;
             case 3:
                 searchService.getSearchResult();
+                view.displayPressAnythingInput();
                 break;
             case 0:
                 isRunning = false;
