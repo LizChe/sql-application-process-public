@@ -47,9 +47,9 @@ public class SearchService {
         }
 
         if (verifyIfNotEmpty(applicantsSearchResult, mentorsSearchResult)) {
-            view.printText("\nApplicants:");
+            view.printText("\n\nApplicants:");
             displayApplicantsResult(applicantsSearchResult);
-            view.printText("\nMentors:");
+            view.printText("\n\nMentors:");
             displayMentorsResult(mentorsSearchResult);
         }
     }
