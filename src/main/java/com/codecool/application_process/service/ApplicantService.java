@@ -60,7 +60,7 @@ public class ApplicantService {
         view.printText("Email:");
         email = view.getStringInput();
 
-        while (email.isEmpty() || email.equals(" ")) {
+        while (email.isEmpty()) {
             view.printText("Input cannot be empty. Try again.");
             email = view.getStringInput();
         }
