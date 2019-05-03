@@ -28,16 +28,18 @@ class ApplicantController {
 
     private void handleUserInput() {
         int userChoice = view.getIntInput();
-        //view.clearScreen();
         switch (userChoice) {
             case 1:
                 applicantService.createNewApplicant();
+                view.displayPressAnythingInput();
                 break;
             case 2:
                 applicantService.deleteApplicantByEmail();
+                view.displayPressAnythingInput();
                 break;
             case 3:
                 applicantService.updateApplicantsPhoneNumber();
+                view.displayPressAnythingInput();
                 break;
             case 4:
                 handleFindApplicantController();
@@ -54,7 +56,7 @@ class ApplicantController {
     private void handleFindApplicantController() {
         isFindingApplicant = true;
         while (isFindingApplicant) {
-            //view.clearScreen();
+            view.clearScreen();
             view.displayFindApplicantMenu();
             handleFindApplicantInput();
         }
@@ -62,16 +64,18 @@ class ApplicantController {
 
     private void handleFindApplicantInput() {
         int userChoice = view.getIntInput();
-        //view.clearScreen();
         switch (userChoice) {
             case 1:
                 applicantService.findApplicantByName();
+                view.displayPressAnythingInput();
                 break;
             case 2:
                 applicantService.findApplicantByEmail();
+                view.displayPressAnythingInput();
                 break;
             case 3:
                 applicantService.findApplicantByApplicationCode();
+                view.displayPressAnythingInput();
                 break;
             case 0:
                 isFindingApplicant = false;

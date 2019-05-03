@@ -18,7 +18,7 @@ class MentorController {
     void handleMentorController() {
         isRunning = true;
         while (isRunning) {
-            //view.clearScreen();
+            view.clearScreen();
             view.displayMentorsMenu();
             handleUserInput();
         }
@@ -26,13 +26,14 @@ class MentorController {
 
     private void handleUserInput() {
         int userChoice = view.getIntInput();
-        //view.clearScreen();
         switch (userChoice) {
             case 1:
                 mentorService.getMentorsFullName();
+                view.displayPressAnythingInput();
                 break;
             case 2:
                 mentorService.getMentorsByChosenCity();
+                view.displayPressAnythingInput();
                 break;
             case 0:
                 isRunning = false;

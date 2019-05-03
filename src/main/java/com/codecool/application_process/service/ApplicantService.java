@@ -49,10 +49,10 @@ public class ApplicantService {
 
         try {
             applicantDao.create(applicant);
+            view.printText("Successfully Created.");
         } catch (DaoException e) {
             view.printText(e.getMessage());
         }
-        view.printText("Successfully Created.");
     }
 
     public void deleteApplicantByEmail() {
@@ -60,12 +60,17 @@ public class ApplicantService {
         view.printText("Email:");
         email = view.getStringInput();
 
+        while (email.isEmpty() || email.equals(" ")) {
+            view.printText("Input cannot be empty. Try again.");
+            email = view.getStringInput();
+        }
+
         try {
             applicantDao.deleteApplicantBy(email);
+            view.printText("Successfully Deleted.");
         } catch (DaoException e) {
             view.printText(e.getMessage());
         }
-        view.printText("Successfully Deleted.");
     }
 
     public void updateApplicantsPhoneNumber() {
@@ -99,10 +104,10 @@ public class ApplicantService {
 
         try {
             applicantDao.update(applicant);
+            view.printText("Successfully Updated.");
         } catch (DaoException e) {
             view.printText(e.getMessage());
         }
-        view.printText("Successfully Updated.");
     }
 
     public void findApplicantByName() {
