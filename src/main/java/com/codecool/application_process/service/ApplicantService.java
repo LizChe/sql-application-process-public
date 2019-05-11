@@ -2,6 +2,7 @@ package com.codecool.application_process.service;
 
 import java.util.List;
 
+import com.codecool.application_process.dao.ApplicantDao;
 import com.codecool.application_process.dao.ApplicantDaoImpl;
 import com.codecool.application_process.dao.DaoException;
 
@@ -12,7 +13,7 @@ import com.codecool.application_process.view.View;
 public class ApplicantService {
 
     private View view;
-    private ApplicantDaoImpl applicantDao;
+    private ApplicantDao applicantDao;
     private List<Applicant> applicants;
 
     public ApplicantService() {
