@@ -6,6 +6,7 @@ import com.codecool.application_process.dao.ApplicantDaoImpl;
 import com.codecool.application_process.dao.DaoException;
 import com.codecool.application_process.dao.MentorDaoImpl;
 
+import com.codecool.application_process.dao.SearchDao;
 import com.codecool.application_process.model.Applicant;
 import com.codecool.application_process.model.Mentor;
 
@@ -13,15 +14,15 @@ import com.codecool.application_process.view.View;
 
 public class SearchService {
 
-    private ApplicantDaoImpl applicantsDao;
-    private MentorDaoImpl mentorsDao;
+    private SearchDao<Applicant> searchApplicantDao;
+    private SearchDao<Mentor> searchMentorDao;
     private View view;
     private List<Mentor> mentorsSearchResult;
     private List<Applicant> applicantsSearchResult;
 
     public SearchService() {
-        applicantsDao = new ApplicantDaoImpl();
-        mentorsDao = new MentorDaoImpl();
+        searchApplicantDao = new ApplicantDaoImpl();
+        searchMentorDao = new MentorDaoImpl();
         view = new View();
     }
 
@@ -32,15 +33,15 @@ public class SearchService {
         if (checkIfInputIsInt(search)) {
             int number = getIntFromSearch(search);
             try {
-                mentorsSearchResult = mentorsDao.getMatchingResultFrom(number);
-                applicantsSearchResult = applicantsDao.getMatchingResultFrom(number);
+                mentorsSearchResult = searchMentorDao.getMatchingResultFrom(number);
+                applicantsSearchResult = searchApplicantDao.getMatchingResultFrom(number);
             } catch (DaoException e) {
                 view.printText(e.getMessage());
             }
         } else {
             try {
-                mentorsSearchResult = mentorsDao.getMatchingResultFrom(search);
-                applicantsSearchResult = applicantsDao.getMatchingResultFrom(search);
+                mentorsSearchResult = searchMentorDao.getMatchingResultFrom(search);
+                applicantsSearchResult = searchApplicantDao.getMatchingResultFrom(search);
             } catch (DaoException e) {
                 view.printText(e.getMessage());
             }
