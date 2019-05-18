@@ -22,11 +22,7 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
         try (Connection connection = DatabaseConnector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setString(1, applicant.getFirstName());
-            preparedStatement.setString(2, applicant.getLastName());
-            preparedStatement.setString(3, applicant.getPhoneNumber());
-            preparedStatement.setString(4, applicant.getEmail());
-            preparedStatement.setInt(5, applicant.getApplicationCode());
+            setRequiredFieldsFrom(preparedStatement, applicant);
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -45,11 +41,7 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
         try (Connection connection = DatabaseConnector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setString(1, applicant.getFirstName());
-            preparedStatement.setString(2, applicant.getLastName());
-            preparedStatement.setString(3, applicant.getPhoneNumber());
-            preparedStatement.setString(4, applicant.getEmail());
-            preparedStatement.setInt(5, applicant.getApplicationCode());
+            setRequiredFieldsFrom(preparedStatement, applicant);
             preparedStatement.setString(6, applicant.getFirstName());
             preparedStatement.setString(7, applicant.getLastName());
             preparedStatement.executeUpdate();
@@ -123,44 +115,13 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
 
     @Override
     public List<Applicant> getApplicantsByFirstName(String firstName) throws DaoException {
-
-        List<Applicant> applicants;
-        String query = "SELECT * "
-                + "FROM applicants "
-                + "WHERE first_name = ?";
-
-        try (Connection connection = DatabaseConnector.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            preparedStatement.setString(1, firstName);
-            applicants = getApplicantsFrom(preparedStatement);
-
-        } catch (SQLException e) {
-            throw new DaoException("Failed to get the applicant with the name: "
-                    + firstName + "\n" + e);
-        }
-        return applicants;
+        return getApplicantsBy("first_name", firstName);
     }
 
     @Override
     public List<Applicant> getApplicantsByEmail(String email) throws DaoException {
-
-        List<Applicant> applicants;
-        String query = "SELECT * "
-                + "FROM applicants "
-                + "WHERE email LIKE ?";
-
-        try (Connection connection = DatabaseConnector.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            preparedStatement.setString(1, "%" + email + "%");
-            applicants = getApplicantsFrom(preparedStatement);
-
-        } catch (SQLException e) {
-            throw new DaoException("Failed to get the applicant with the email: "
-                    + email + "\n" + e);
-        }
-        return applicants;
+        email = "%" + email + "%";
+        return getApplicantsBy("email", email);
     }
 
     @Override
@@ -247,6 +208,34 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
 
         } catch (SQLException e) {
             throw new DaoException("Failed to populate the list of applicants.\n" + e);
+        }
+        return applicants;
+    }
+
+    private void setRequiredFieldsFrom(PreparedStatement preparedStatement, Applicant applicant) throws SQLException {
+        preparedStatement.setString(1, applicant.getFirstName());
+        preparedStatement.setString(2, applicant.getLastName());
+        preparedStatement.setString(3, applicant.getPhoneNumber());
+        preparedStatement.setString(4, applicant.getEmail());
+        preparedStatement.setInt(5, applicant.getApplicationCode());
+    }
+
+    private List<Applicant> getApplicantsBy(String column, String value) throws DaoException {
+
+        List<Applicant> applicants;
+        String query = "SELECT * "
+                + "FROM applicants "
+                + "WHERE " + column + " LIKE ?";
+
+        try (Connection connection = DatabaseConnector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, value);
+            applicants = getApplicantsFrom(preparedStatement);
+
+        } catch (SQLException e) {
+            throw new DaoException("Failed to get applicant with the : "
+                    + value + "\n" + e);
         }
         return applicants;
     }
