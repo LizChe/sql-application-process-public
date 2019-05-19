@@ -1,17 +1,21 @@
 package com.codecool.application_process.view;
 
+import java.util.List;
 import java.util.Scanner;
+
+import com.codecool.application_process.model.Applicant;
+import com.codecool.application_process.model.Mentor;
 
 public class View {
 
-    private Scanner scanner = new Scanner(System.in);
+    private Scanner scanner;
+
+    public View() {
+        scanner = new Scanner(System.in);
+    }
 
     public void printText(String text) {
         System.out.println(text);
-    }
-
-    public void printFormattedText(String format, Object... args) {
-        System.out.printf(format, args);
     }
 
     public void displayLogo() {
@@ -52,6 +56,11 @@ public class View {
                 + "⓪ ➤ 𝔼𝕩𝕚𝕥\n");
     }
 
+    public void displayPressAnythingInput() {
+        printText("\n\nPress anything to continue.");
+        scanner.nextLine();
+    }
+
     public int getIntInput() {
         int number;
         while (!scanner.hasNextInt()) {
@@ -63,7 +72,7 @@ public class View {
         return number;
     }
 
-    public String getStringInput() {
+    private String getStringInput() {
         return scanner.nextLine();
     }
 
@@ -72,8 +81,108 @@ public class View {
         System.out.flush();
     }
 
-    public void displayPressAnythingInput() {
-        printText("\n\nPress anything to continue.");
-        scanner.nextLine();
+    public String getNotEmptyInputOf(String column) {
+        printText(column);
+        String input = getStringInput();
+        while (input.isEmpty()) {
+            printText("Input cannot be empty. Try again.");
+            input = getStringInput();
+        }
+        return input;
+    }
+
+    public int getNotEmptyIntInputOf(String column) {
+        printText(column);
+        return getIntInput();
+    }
+
+    public String[] getValidFullName() {
+        printText("Name & Surname:");
+        String[] fullName = getStringInput().split(" ");
+        while (fullName.length != 2) {
+            printText("Wrong Input. Try again");
+            fullName = getStringInput().split(" ");
+        }
+        return fullName;
+    }
+
+    public int getInt(String input) {
+        return Integer.parseInt(input);
+    }
+
+     public boolean isNotEmpty(List list) {
+         if (list.isEmpty()) {
+             printText("No results.");
+             return false;
+         }
+         return true;
+     }
+
+    public boolean isFirstName(String input) {
+        String[] name = input.split(" ");
+        return (name.length == 1);
+    }
+
+    public boolean isInt(String input) {
+        return input.matches("\\d+");
+    }
+
+    public void printMentorsFullName(List<Mentor> mentors) {
+        Table table = new Table();
+        table.setHeaders("First Name", "Last Name");
+        for (Mentor mentor : mentors) {
+            table.addRow(mentor.getFirstName(), mentor.getLastName());
+        }
+        table.printTable();
+    }
+
+    public void printMentorsNickName(List<Mentor> mentors) {
+        Table table = new Table();
+        table.setHeaders("Nick Name");
+        for (Mentor mentor : mentors) {
+            table.addRow(mentor.getNickName());
+        }
+        table.printTable();
+    }
+
+    public void printApplicantsFullNamePhoneNumber(List<Applicant> applicants) {
+        Table table = new Table();
+        table.setHeaders("First Name", "Last Name", "Phone");
+        for (Applicant applicant : applicants) {
+            table.addRow(applicant.getFirstName(),
+                    applicant.getLastName(),
+                    applicant.getPhoneNumber());
+        }
+        table.printTable();
+    }
+
+    public void printApplicants(List<Applicant> applicants) {
+        Table table = new Table();
+        table.setHeaders("ID", "First Name", "Last Name", "Phone", "Email", "Application Code");
+        for (Applicant applicant : applicants) {
+            table.addRow(String.valueOf(applicant.getID()),
+                    applicant.getFirstName(),
+                    applicant.getLastName(),
+                    applicant.getPhoneNumber(),
+                    applicant.getEmail(),
+                    String.valueOf(applicant.getApplicationCode()));
+        }
+        table.printTable();
+    }
+
+    public void printMentors(List<Mentor> mentors) {
+        Table table = new Table();
+        table.setHeaders("ID", "First Name", "Last Name", "Nick Name", "Phone", "Email", "City", "Favourite Number");
+        for (Mentor mentor : mentors) {
+                table.addRow(String.valueOf(mentor.getID()),
+                        mentor.getFirstName(),
+                        mentor.getLastName(),
+                        mentor.getNickName(),
+                        mentor.getPhoneNumber(),
+                        mentor.getEmail(),
+                        mentor.getCity(),
+                        String.valueOf(mentor.getFavouriteNumber()));
+        }
+        table.printTable();
     }
 }
