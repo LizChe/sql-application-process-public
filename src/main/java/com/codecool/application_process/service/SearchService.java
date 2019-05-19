@@ -27,11 +27,10 @@ public class SearchService {
     }
 
     public void getSearchResult() {
-        view.printText("Search:");
-        String search = view.getStringInput();
+        String search = view.getNotEmptyInputOf("Search:");
 
-        if (checkIfInputIsInt(search)) {
-            int number = getIntFromSearch(search);
+        if (view.isInt(search)) {
+            int number = view.getInt(search);
             try {
                 mentorsSearchResult = searchMentorDao.getMatchingResultFrom(number);
                 applicantsSearchResult = searchApplicantDao.getMatchingResultFrom(number);
@@ -47,45 +46,13 @@ public class SearchService {
             }
         }
 
-        if (verifyIfNotEmpty(applicantsSearchResult, mentorsSearchResult)) {
-            view.printText("\n\nApplicants:");
-            displayApplicantsResult(applicantsSearchResult);
-            view.printText("\n\nMentors:");
-            displayMentorsResult(mentorsSearchResult);
+        view.printText("\n\nApplicants:");
+        if (view.isNotEmpty(applicantsSearchResult)) {
+            view.printApplicants(applicantsSearchResult);
         }
-    }
-
-    private int getIntFromSearch(String search) {
-        return Integer.parseInt(search);
-    }
-
-    private boolean checkIfInputIsInt(String search) {
-        String regex = "\\d+";
-        return search.matches(regex);
-    }
-
-    private void displayApplicantsResult(List<Applicant> applicantsSearchResult) {
-        for (Applicant applicant : applicantsSearchResult) {
-            view.printFormattedText("%n%s %s %s %s %s %s",
-                    applicant.getID(), applicant.getFirstName(), applicant.getLastName(),
-                    applicant.getPhoneNumber(), applicant.getEmail(), applicant.getApplicationCode());
+        view.printText("\n\nMentors:");
+        if (view.isNotEmpty(mentorsSearchResult)) {
+            view.printMentors(mentorsSearchResult);
         }
-    }
-
-    private void displayMentorsResult(List<Mentor> mentorsSearchResult) {
-        for (Mentor mentor : mentorsSearchResult) {
-            view.printFormattedText("%n%s %s %s %s %s %s %s %s",
-                    mentor.getID(), mentor.getFirstName(), mentor.getLastName(),
-                    mentor.getNickName(), mentor.getPhoneNumber(), mentor.getEmail(),
-                    mentor.getCity(), mentor.getFavouriteNumber());
-        }
-    }
-
-    private boolean verifyIfNotEmpty(List<Applicant> applicants, List<Mentor> mentors) {
-        if (applicants.isEmpty() && mentors.isEmpty()) {
-            view.printText("No results.");
-            return false;
-        }
-        return true;
     }
 }
