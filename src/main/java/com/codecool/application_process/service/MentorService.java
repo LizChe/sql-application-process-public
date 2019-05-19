@@ -28,14 +28,11 @@ public class MentorService {
         } catch (DaoException e) {
             view.printText(e.getMessage());
         }
-        for (Mentor mentor : mentors) {
-            view.printFormattedText("%n%s %s", mentor.getFirstName(), mentor.getLastName());
-        }
+        view.printMentorsFullName(mentors);
     }
 
     public void getMentorsByChosenCity() {
-        view.printText("City:");
-        String city = view.getStringInput();
+        String city = view.getNotEmptyInputOf("City:");
 
         try {
             mentors = mentorDao.getMentorsFrom(city);
@@ -43,18 +40,8 @@ public class MentorService {
             view.printText(e.getMessage());
         }
 
-        if (verifyIfNotEmpty(mentors)) {
-            for (Mentor mentor : mentors) {
-                view.printText(mentor.getNickName());
-            }
+        if (view.isNotEmpty(mentors)) {
+            view.printMentorsNickName(mentors);
         }
-    }
-
-    private boolean verifyIfNotEmpty(List<Mentor> mentors) {
-        if (mentors.isEmpty()) {
-            view.printText("No results.");
-            return false;
-        }
-        return true;
     }
 }

@@ -29,16 +29,11 @@ public class ApplicantService {
         String email;
         int applicationCode;
 
-        view.printText("First Name:");
-        firstName = view.getStringInput();
-        view.printText("Last Name:");
-        lastName = view.getStringInput();
-        view.printText("Phone Number:");
-        phoneNumber = view.getStringInput();
-        view.printText("Email:");
-        email = view.getStringInput();
-        view.printText("Application Code:");
-        applicationCode = view.getIntInput();
+        firstName = view.getNotEmptyInputOf("First Name:");
+        lastName = view.getNotEmptyInputOf("Last Name:");
+        phoneNumber = view.getNotEmptyInputOf("Phone Number:");
+        email = view.getNotEmptyInputOf("Email:");
+        applicationCode = view.getNotEmptyIntInputOf("Application Code:");
 
         applicant = new Applicant.Builder()
                 .withFirstName(firstName)
@@ -49,104 +44,69 @@ public class ApplicantService {
                 .build();
 
         try {
-            applicantDao.create(applicant);
-            view.printText("Successfully Created.");
+            int rowsAffected = applicantDao.create(applicant);
+            view.printText("Successfully Created.\n" + rowsAffected + ": rows have been affected.");
         } catch (DaoException e) {
             view.printText(e.getMessage());
         }
     }
 
     public void deleteApplicantByEmail() {
-        String email;
-        view.printText("Email:");
-        email = view.getStringInput();
-
-        while (email.isEmpty()) {
-            view.printText("Input cannot be empty. Try again.");
-            email = view.getStringInput();
-        }
-
+        String email = view.getNotEmptyInputOf("Email:");
         try {
-            applicantDao.deleteApplicantBy(email);
-            view.printText("Successfully Deleted.");
+            int rowsAffected = applicantDao.deleteApplicantBy(email);
+            view.printText("Successfully Deleted.\n" + rowsAffected + ": rows have been affected.");
         } catch (DaoException e) {
             view.printText(e.getMessage());
         }
     }
 
     public void updateApplicantsPhoneNumber() {
-        String firstName;
-        String lastName;
         String phoneNumber;
-        String[] fullName;
         Applicant applicant;
 
-        view.printText("Name & Surname:");
-        fullName = view.getStringInput().split(" ");
-        while (fullName.length != 2) {
-            view.printText("Wrong Input. Try again");
-            fullName = view.getStringInput().split(" ");
-        }
+        applicants = getApplicantByFullName();
 
-        firstName = fullName[0];
-        lastName = fullName[1];
+        if (view.isNotEmpty(applicants)) {
+            applicant = applicants.get(0);
+            phoneNumber = view.getNotEmptyInputOf("New phone number:");
+            applicant.setPhoneNumber(phoneNumber);
 
-        try {
-            applicants = applicantDao.getApplicantBy(firstName, lastName);
-        } catch (DaoException e) {
-            view.printText(e.getMessage());
-        }
-
-        applicant = applicants.get(0);
-
-        view.printText("New phone number:");
-        phoneNumber = view.getStringInput();
-        applicant.setPhoneNumber(phoneNumber);
-
-        try {
-            applicantDao.update(applicant);
-            view.printText("Successfully Updated.");
-        } catch (DaoException e) {
-            view.printText(e.getMessage());
+            try {
+                int rowsAffected = applicantDao.update(applicant);
+                view.printText("Successfully Updated.\n" + rowsAffected + ": rows have been affected.");
+            } catch (DaoException e) {
+                view.printText(e.getMessage());
+            }
         }
     }
 
     public void findApplicantByName() {
-        String firstName;
-        String lastName;
         String[] fullName;
+        String name = view.getNotEmptyInputOf("Name or full name:");
 
-        view.printText("Name or full name:");
-        fullName = view.getStringInput().split(" ");
-        if (fullName.length == 1) {
+        if (view.isFirstName(name)) {
             try {
-                applicants = applicantDao.getApplicantsByFirstName(fullName[0]);
+                applicants = applicantDao.getApplicantsByFirstName(name);
             } catch (DaoException e) {
                 view.printText(e.getMessage());
             }
-        } else if (fullName.length == 2) {
-            firstName = fullName[0];
-            lastName = fullName[1];
+        } else {
+            fullName = name.split(" ", 2);
             try {
-                applicants = applicantDao.getApplicantBy(firstName, lastName);
+                applicants = applicantDao.getApplicantBy(fullName[0], fullName[1]);
             } catch (DaoException e) {
                 view.printText(e.getMessage());
             }
         }
 
-        if (verifyIfNotEmpty(applicants)) {
-            for (Applicant applicant : applicants) {
-                view.printFormattedText("%n%s %s: %s",
-                        applicant.getFirstName(), applicant.getLastName(), applicant.getPhoneNumber());
-            }
+        if (view.isNotEmpty(applicants)) {
+            view.printApplicantsFullNamePhoneNumber(applicants);
         }
     }
 
     public void findApplicantByEmail() {
-        String email;
-
-        view.printText("Email:");
-        email = view.getStringInput();
+        String email = view.getNotEmptyInputOf("Email:");
 
         try {
             applicants = applicantDao.getApplicantsByEmail(email);
@@ -154,39 +114,33 @@ public class ApplicantService {
             view.printText(e.getMessage());
         }
 
-        if (verifyIfNotEmpty(applicants)) {
-            printAllData(applicants);
+        if (view.isNotEmpty(applicants)) {
+            view.printApplicants(applicants);
         }
     }
 
     public void findApplicantByApplicationCode() {
-        int applicationCode;
+        int applicationCode = view.getNotEmptyIntInputOf("Application code:");
 
-        view.printText("Application code:");
-        applicationCode = view.getIntInput();
         try {
             applicants = applicantDao.getApplicantBy(applicationCode);
         } catch (DaoException e) {
             view.printText(e.getMessage());
         }
-        if (verifyIfNotEmpty(applicants)) {
-            printAllData(applicants);
+
+        if (view.isNotEmpty(applicants)) {
+            view.printApplicants(applicants);
         }
     }
 
-    private void printAllData(List<Applicant> applicants) {
-        for (Applicant applicant : applicants) {
-            view.printFormattedText("%n%s %s %s %s %s %s",
-                    applicant.getID(), applicant.getFirstName(), applicant.getLastName(),
-                    applicant.getPhoneNumber(), applicant.getEmail(), applicant.getApplicationCode());
-        }
-    }
+    private List<Applicant> getApplicantByFullName() {
+        String[] fullName = view.getValidFullName();
 
-    private boolean verifyIfNotEmpty(List<Applicant> applicants) {
-        if (applicants.isEmpty()) {
-            view.printText("No results.");
-            return false;
+        try {
+            applicants = applicantDao.getApplicantBy(fullName[0], fullName[1]);
+        } catch (DaoException e) {
+            view.printText(e.getMessage());
         }
-        return true;
+        return applicants;
     }
 }

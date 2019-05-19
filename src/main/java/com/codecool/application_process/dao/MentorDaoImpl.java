@@ -36,7 +36,7 @@ public class MentorDaoImpl implements MentorDao, SearchDao<Mentor> {
         List<Mentor> mentors;
         String query = "SELECT * "
                 + "FROM mentors "
-                + "WHERE city = ?";
+                + "WHERE LOWER(city) LIKE LOWER(?)";
 
         try (Connection connection = DatabaseConnector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -56,12 +56,12 @@ public class MentorDaoImpl implements MentorDao, SearchDao<Mentor> {
         List<Mentor> mentors;
         userInput = "%" + userInput + "%";
         String query = "SELECT * FROM mentors "
-                + "WHERE first_name LIKE ? "
-                + "OR last_name LIKE ? "
-                + "OR nick_name LIKE ?"
-                + "OR phone_number LIKE ? "
-                + "OR email LIKE ? "
-                + "OR city LIKE ?";
+                + "WHERE LOWER(first_name) LIKE LOWER(?) "
+                + "OR LOWER(last_name) LIKE LOWER(?) "
+                + "OR LOWER(nick_name) LIKE LOWER(?) "
+                + "OR LOWER(phone_number) LIKE (?) "
+                + "OR LOWER(email) LIKE LOWER(?) "
+                + "OR LOWER(city) LIKE LOWER(?)";
 
         try (Connection connection = DatabaseConnector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -87,13 +87,15 @@ public class MentorDaoImpl implements MentorDao, SearchDao<Mentor> {
         List<Mentor> mentors;
         String query = "SELECT * FROM mentors "
                 + "WHERE id = ?"
-                + "OR favourite_number = ?";
+                + "OR favourite_number = ? "
+                + "OR phone_number LIKE ?";
 
         try (Connection connection = DatabaseConnector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setInt(1, userInput);
             preparedStatement.setInt(2, userInput);
+            preparedStatement.setString(3, "%" + userInput + "%");
             mentors = getMentorsFrom(preparedStatement);
 
         } catch (SQLException e) {
