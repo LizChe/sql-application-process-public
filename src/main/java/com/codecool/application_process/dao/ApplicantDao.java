@@ -6,11 +6,11 @@ import com.codecool.application_process.model.Applicant;
 
 public interface ApplicantDao {
 
-    public void create(Applicant applicant) throws DaoException;
+    public int create(Applicant applicant) throws DaoException;
 
-    public void update(Applicant applicant) throws DaoException;
+    public int update(Applicant applicant) throws DaoException;
 
-    public void deleteApplicantBy(String email) throws DaoException;
+    public int deleteApplicantBy(String email) throws DaoException;
 
     public List<Applicant> getApplicantBy(String firstName, String lastName) throws DaoException;
 
