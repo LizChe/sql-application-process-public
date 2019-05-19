@@ -13,7 +13,7 @@ import com.codecool.application_process.model.Applicant;
 public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
 
     @Override
-    public void create(Applicant applicant) throws DaoException {
+    public int create(Applicant applicant) throws DaoException {
 
         String query = "INSERT INTO applicants "
                 + "(first_name, last_name, phone_number, email, application_code) "
@@ -23,7 +23,8 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             setRequiredFieldsFrom(preparedStatement, applicant);
-            preparedStatement.executeUpdate();
+
+            return preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             throw new DaoException("Failed to add the applicant.\n" + e);
@@ -31,12 +32,13 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
     }
 
     @Override
-    public void update(Applicant applicant) throws DaoException {
+    public int update(Applicant applicant) throws DaoException {
 
         String query = "UPDATE applicants "
                 + "SET first_name = ?, last_name = ?, phone_number = ?, "
                 + "email = ?, application_code = ?"
-                + "WHERE first_name = ? AND last_name = ?";
+                + "WHERE LOWER(first_name) LIKE LOWER(?) "
+                + "AND LOWER(last_name) LIKE LOWER(?)";
 
         try (Connection connection = DatabaseConnector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -44,7 +46,8 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
             setRequiredFieldsFrom(preparedStatement, applicant);
             preparedStatement.setString(6, applicant.getFirstName());
             preparedStatement.setString(7, applicant.getLastName());
-            preparedStatement.executeUpdate();
+
+            return preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             throw new DaoException("Failed to update the applicant: "
@@ -53,7 +56,7 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
     }
 
     @Override
-    public void deleteApplicantBy(String email) throws DaoException {
+    public int deleteApplicantBy(String email) throws DaoException {
 
         String query = "DELETE FROM applicants WHERE email LIKE ?";
 
@@ -61,7 +64,8 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setString(1, "%" + email + "%");
-            preparedStatement.executeUpdate();
+
+            return preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             throw new DaoException("Failed to delete the applicant(s) with email: "
@@ -75,7 +79,8 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
         List<Applicant> applicants;
         String query = "SELECT * "
                 + "FROM applicants "
-                + "WHERE first_name = ? AND last_name = ?";
+                + "WHERE LOWER(first_name) = LOWER(?) "
+                + "AND LOWER(last_name) = LOWER(?)";
 
         try (Connection connection = DatabaseConnector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -87,7 +92,6 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
         } catch (SQLException e) {
             throw new DaoException("Failed to build the list of applicants.\n" + e);
         }
-
         return applicants;
     }
 
@@ -109,7 +113,6 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
             throw new DaoException("Failed to get the applicant with the application code: "
                     + applicationCode + "\n" + e);
         }
-
         return applicants;
     }
 
@@ -130,10 +133,10 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
         List<Applicant> applicants;
         userInput = "%" + userInput + "%";
         String query = "SELECT * FROM applicants "
-                + "WHERE first_name LIKE ? "
-                + "OR last_name LIKE ? "
+                + "WHERE LOWER(first_name) LIKE LOWER(?) "
+                + "OR LOWER(last_name) LIKE LOWER(?) "
                 + "OR phone_number LIKE ? "
-                + "OR email LIKE ?";
+                + "OR LOWER(email) LIKE LOWER(?)";
 
         try (Connection connection = DatabaseConnector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -157,13 +160,15 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
         List<Applicant> applicants;
         String query = "SELECT * FROM applicants "
                 + "WHERE id = ?"
-                + "OR application_code = ?";
+                + "OR application_code = ? "
+                + "OR phone_number LIKE ?";
 
         try (Connection connection = DatabaseConnector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setInt(1, userInput);
             preparedStatement.setInt(2, userInput);
+            preparedStatement.setString(3, "%" + userInput + "%");
             applicants = getApplicantsFrom(preparedStatement);
 
         } catch (SQLException e) {
@@ -225,7 +230,7 @@ public class ApplicantDaoImpl implements ApplicantDao, SearchDao<Applicant> {
         List<Applicant> applicants;
         String query = "SELECT * "
                 + "FROM applicants "
-                + "WHERE " + column + " LIKE ?";
+                + "WHERE LOWER(" + column + ") LIKE LOWER(?)";
 
         try (Connection connection = DatabaseConnector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
